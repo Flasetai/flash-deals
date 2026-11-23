@@ -8,9 +8,8 @@ interface IMintableToken {
     function mint(address to, uint256 amount) external;
 }
 
-/// @notice A stand-in for Sablier's Lockup v4.0 in the unit tests: it checks what Sablier's documentation requires of the
-/// create calls, pulls the deposit from its caller, and records every parameter so a test can assert exactly what
-/// FlasetDealsV2 asked for. It can also misbehave in the ways FlasetDealsV2's checks after creation must catch.
+/// @notice Sablier Lockup v4.0 stand-in. Validates create params as documented, pulls the deposit and records every
+/// parameter. Can be switched into failure modes to exercise FlasetDeals' post-create checks.
 contract MockSablierLockup {
     enum Mode {
         Honest,
@@ -129,7 +128,7 @@ contract MockSablierLockup {
         });
     }
 
-    // ---------------------------------------------------------------- the getters FlasetDealsV2 reads
+    // ---------------------------------------------------------------- getters read by FlasetDeals
 
     function getRecipient(uint256 id) external view returns (address) {
         return _streams[id].recipient;

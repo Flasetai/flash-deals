@@ -31,10 +31,9 @@ contract StickyAllowanceToken is ERC20 {
     }
 }
 
-/// @notice FlasetDealsV3 against a recording stand-in for Sablier's Lockup: FlasetDealsV2's suite on V3,
-/// every v1 guard, the exact create call per shape, and the checks after creation against a Lockup that misbehaves. The
-/// registry here lists nothing and caps everything at 0, which closed every token on V2: V3 reads neither. The
-/// tokens nobody listed, the odd ones and the block list: test/FlasetDealsV3Tokens.t.sol.
+/// @notice Unit tests against MockSablierLockup: v1/v2 guards, the create call per shape, and post-create checks
+/// against a misbehaving Lockup. The registry lists nothing and caps everything at 0 (V3 reads neither).
+/// Token edge cases and the block list are in FlasetDealsV3Tokens.t.sol.
 contract FlasetDealsV3Test is FlasetTestBase {
     uint256 constant PAY = 10_000e6; // 10,000 USDG
     uint256 constant ASSET = 1_000_000e18; // 1M project tokens
@@ -80,7 +79,7 @@ contract FlasetDealsV3Test is FlasetTestBase {
         _assertHoldsNothing();
     }
 
-    /// The brief's example: 70% delivered now, 30% into a linear Sablier stream.
+    /// 70% delivered now, 30% into a linear stream.
     function test_shape_linear_70_30() public {
         FlasetDealsV3.Deal memory d = _d(ASSET, PAY, 3_000);
         _fund(d);
@@ -140,7 +139,7 @@ contract FlasetDealsV3Test is FlasetTestBase {
         d.vestingSteps = 12;
         _fund(d);
         _settle(d);
-        // Python's datetime (evidence/months-expected.txt): 28 Feb, 31 Mar, 30 Apr, ... 31 Jan 2027, all at 13:45:10
+        // expected (from Python's datetime): 28 Feb, 31 Mar, 30 Apr, ... 31 Jan 2027, all at 13:45:10
         uint40[12] memory want = [
             uint40(1_772_286_310), 1_774_964_710, 1_777_556_710, 1_780_235_110, 1_782_827_110, 1_785_505_510,
             1_788_183_910, 1_790_775_910, 1_793_454_310, 1_796_046_310, 1_798_724_710, 1_801_403_110
